@@ -30,9 +30,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG') == 'True'
 
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1' ]
-
+#ALLOWED_HOSTS = ['localhost', '127.0.0.1','HTTPS' ]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -48,7 +47,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'account',
     
-    
+
     
     'storages',
     'django.contrib.gis',
@@ -149,6 +148,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+
+CORS_ORIGIN_WHITELIST = [
+    'https://localhost:3000',
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
