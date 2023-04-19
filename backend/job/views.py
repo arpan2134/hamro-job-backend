@@ -14,6 +14,7 @@ from .models import CandidatesApplied, Job
 from django.shortcuts import get_object_or_404
 from .filters import JobsFilter
 from .serializers import CandidatesAppliedSerializer, JobSerializer
+
 # Create your views here.
 
 @api_view(['GET'])
@@ -45,9 +46,11 @@ def getAllJobs(request):
 def getJob(request, pk):
     job = get_object_or_404(Job, id=pk)
 
+    candidates = job.candidatesapplied_set.all().count()
+
     serializer = JobSerializer(job, many=False)
 
-    return Response(serializer.data)
+    return Response({'job': serializer.data, 'candidates': candidates})
 
 
 @api_view(['POST'])
