@@ -5,11 +5,27 @@ import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
 mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN;
 
 const JobDetails = ({ job, candidates }) => {
-    console.log(job.point);
 
-    const cooridnates = job.point;
+  
+    useEffect(async () => {
 
-    useEffect(async () => {}, []);
+
+      const cooridnates = job.point.split("(")[1].replace(")", "").split(" ");
+    
+    // Create mappp...... set the center pointtttt
+
+    const map = new mapboxgl.Map({
+      container: 'job-map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: cooridnates,
+      zoom: 11
+    });
+
+    //marker add on map 
+
+    new mapboxgl.Marker().setLngLat(cooridnates).addTo(map);
+
+    }, []);
 
 
     return (
@@ -93,6 +109,7 @@ const JobDetails = ({ job, candidates }) => {
 
               <div className="job-location">
                 <h4 className="mt-5 mb-4">Job Location</h4>
+                <div id='job-map' style={{ height: 510, width: '90%' }} />
               </div>
             </div>
           </div>

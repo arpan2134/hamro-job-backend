@@ -4,7 +4,6 @@ import axios from "axios";
 
 
 export default function JobDetailsPage({ job, candidates }) {
-    console.log(job, candidates);
 
   return (
     <Layout>
