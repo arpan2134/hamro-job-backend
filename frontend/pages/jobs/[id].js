@@ -1,28 +1,29 @@
 import Layout from "../../components/layout/Layout";
+import JobDetails from "../../components/job/JobDetails";
 import axios from "axios";
 
 
-export default function JobDetailsPage({ job }) {
-    console.log(job);
+export default function JobDetailsPage({ job, candidates }) {
+    console.log(job, candidates);
 
   return (
     <Layout>
-     <h1>Job Details</h1>
+     <JobDetails job={job} candidates={candidates}/>
     </Layout>
   );
 }
 
 export async function getServerSideProps({ params }) {
-
-    const res = await axios.get(`http://127.0.0.1:8000/api/jobs/{params.id}/`);
-    const job = res.data;
+    const res = await axios.get(`http://127.0.0.1:8000/api/jobs/${params.id}`);
+  
+    const job = res.data.job;
+    const candidates = res.data.candidates
 
     return{
         props: {
-            job
-        }
-    }
+            job,
+            candidates
+        },
+    };
     
-
-
 }

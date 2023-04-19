@@ -5,8 +5,6 @@ import axios from "axios";
 
 
 export default function Index({ data }) {
-
-  
   return (
     <Layout>
       <Home data={data} />
