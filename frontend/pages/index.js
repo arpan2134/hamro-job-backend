@@ -12,9 +12,29 @@ export default function Index({ data }) {
   );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ query }) {
 
-  const res = await axios.get(`http://127.0.0.1:8000/api/jobs/`);
+  const jobType = query.jobType || '';
+  const education = query.education || '';
+  const experience = query.experience || '';
+  const keyword = query.keyword || '';
+  const location = query.location || '';
+  const page = query.page || 1;
+
+  let min_salary = ''
+  let max_salary = ''
+
+  if(query.salary) {
+    const [min, max] = query.salary.split('_');
+    min_salary = min;
+    max_salary = max;
+  }
+
+  const queryStr = `keyword=${keyword}&location=${location}&page=${page}&jobType=${jobType}&education=${education}&experience=${experience}&min_salary=${min_salary}&max_salary=${max_salary}`;
+
+
+
+  const res = await axios.get(`http://127.0.0.1:8000/api/jobs?${queryStr}`);
   const data = res.data;
   
   
@@ -22,7 +42,7 @@ export async function getServerSideProps() {
   return {
     props: {
       data,
-    }
-  }
+    },
+  };
 
 }

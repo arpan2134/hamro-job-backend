@@ -1,4 +1,4 @@
-import React, { use, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import moment from 'moment';
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
 
@@ -28,7 +28,7 @@ const JobDetails = ({ job, candidates }) => {
           <div className="col-xl-9 col-lg-8">
             <div className="job-details p-3">
               <div className="job-header p-4">
-                <h2>{job.tittle}</h2>
+                <h2>{job.title}</h2>
                 <span>
                   <i aria-hidden className="fas fa-building"></i>
                   <span> {job.company} </span>
@@ -126,7 +126,7 @@ const JobDetails = ({ job, candidates }) => {
                 <h5>Note:</h5>
                 You can no longer apply to this job. This job is expired. Last
                 date to apply for this job was: <b>15-2-2022</b>
-                <br /> Checkout others job on Jobbee.
+                <br /> Checkout others job on HamroJob.
               </div>
             </div>
           </div>

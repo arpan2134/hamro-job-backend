@@ -373,16 +373,16 @@ footer {
 /* Pagination */
 
 .page-item.active .page-link {
-  background-color: #2557a7;
-  border-color: #2557a7;
+  background-color: #67ae77;
+  border-color: #67ae77;
 }
 
 .page-link {
-  color: #2557a7;
+  color: #67ae77;
 }
 
 .page-link:hover {
-  color: #2557a7;
+  color: #67ae77;
 }
 
 /* 404 Page */
