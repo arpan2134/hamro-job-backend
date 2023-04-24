@@ -16,7 +16,7 @@ export default async (req, res) => {
              {
 
                 username,
-                password
+                password,
             }, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,12 +43,12 @@ export default async (req, res) => {
             } else {
                 res.status(response.status).json({
                     error: 'Authentication failed',
-                })
+                });
             }
             
         } catch (error) {
-            res.status(500).json({
-                error: error.response && error.response.data.detail,
+            res.status(error.response.status).json({
+                error: error.response && error.response.data.error,
             })
         }
 

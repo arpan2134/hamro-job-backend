@@ -3,6 +3,8 @@ import React from "react";
 import Script from "next/script";
 import Header from  "./Header";
 import Footer from "./Footer";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Layout = ({ children, title = 'Find you Job'}) => {
     return (
@@ -25,6 +27,8 @@ const Layout = ({ children, title = 'Find you Job'}) => {
   strategy="beforeInteractive"
   src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
 ></Script>
+
+<ToastContainer position="bottom-right"   />
 
         <Header />
         {children}

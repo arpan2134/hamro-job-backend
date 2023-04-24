@@ -8,12 +8,18 @@ const AuthContext = createContext();
 export const Authprovider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [error, setError] = useState(null);
 
 
 
     const router = useRouter();
+
+    useEffect(() => {
+        if (!user) {
+            loadUser();
+        }
+    }, [user]);
 
 
     //login user
@@ -21,12 +27,13 @@ export const Authprovider = ({ children }) => {
         try {
           setLoading(true);
     
-          const res = await axios.post('/api/auth/login', {
+          const res = await axios.post("/api/auth/login", {
             username,
             password,
           });
 
-        if(res.data.sucess) {
+        if(res.data.success) {
+            loadUser();
             setIsAuthenticated(true);
             setLoading(false);
             router.push('/');
@@ -40,6 +47,33 @@ export const Authprovider = ({ children }) => {
             );
         }
     };
+
+    //load user
+
+    const loadUser = async () => {
+        try {
+          setLoading(true);
+    
+          const res = await axios.get("/api/auth/user");
+
+        if(res.data.user) {
+            setIsAuthenticated(true);
+            setLoading(false);
+            setUser(res.data.user)
+
+        }
+
+        } catch (error) {
+            setLoading(false);
+            setIsAuthenticated(false);
+            setUser(null);
+            setError(
+                error.response && 
+                (error.response.data.detail || error.response.data.error)
+            );
+        }
+    };
+
 
 
     return (
