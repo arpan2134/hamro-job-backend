@@ -14,7 +14,7 @@ export default async (req, res) => {
 
         if(!access) {
             return res.status(401).json({
-                error: 'Login first to load user'
+                message: 'Login first to load user'
 
             })
         }

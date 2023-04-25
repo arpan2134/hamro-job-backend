@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import AuthContext from '../../context/AuthContext'
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 const Login = () => {
 
@@ -15,12 +16,13 @@ const Login = () => {
 
     const router = useRouter()
 
-    const { loading, error, isAuthenticated, login } = useContext(AuthContext);
+    const { loading, error, isAuthenticated, login, clearErrors } = useContext(AuthContext);
 
     useEffect(() =>{
 
         if(error) {
           toast.error(error);
+          clearErrors();
         }
 
         if(isAuthenticated && !loading) {
@@ -78,7 +80,7 @@ const Login = () => {
                 </button>
               </div>
               <p style={{ textDecoration: "none" }} className="signup">
-                New to HamroJob? <a href="/register">Create an account</a>
+                New to HamroJob? <Link href="/register">Create an account</Link>
               </p>
             </form>
           </div>

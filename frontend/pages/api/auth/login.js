@@ -19,42 +19,34 @@ export default async (req, res) => {
                 password,
             }, {
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-            );
-
-            if(response.data.access) {
-                res.setHeader('Set-Cokkie',[
-                    cookie.serialize('access', response.data.access,{
-                        httpOnly: true,
-                        Secure: process.env.NODE_ENV !== 'development',
-                        maxAge: 60 * 60 * 24 * 15,
-                        sameSite: 'Lax',
-                        path: "/",
-                    }),
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+        
+              if (response.data.access) {
+                res.setHeader("Set-Cookie", [
+                  cookie.serialize("access", response.data.access, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV !== "development",
+                    maxAge: 60 * 60 * 24 * 15,
+                    sameSite: "Lax",
+                    path: "/",
+                  }),
                 ]);
-
-
+        
                 return res.status(200).json({
-                    success: true,
+                  success: true,
                 });
-
-            } else {
+              } else {
                 res.status(response.status).json({
-                    error: 'Authentication failed',
+                  error: "Authentication failed",
                 });
-            }
-            
-        } catch (error) {
-            res.status(error.response.status).json({
+              }
+            } catch (error) {
+              res.status(error.response.status).json({
                 error: error.response && error.response.data.error,
-            })
-        }
-
-
-
-
-
-    }
-}
+              });
+            }
+          }
+        };

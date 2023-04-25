@@ -48,6 +48,34 @@ export const Authprovider = ({ children }) => {
         }
     };
 
+    //register user
+    const register = async ({ firstName, lastName, email, password }) => {
+        try {
+          setLoading(true);
+    
+          const res = await axios.post(`http://127.0.0.1:8000/api/register/`, {
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            password,
+          });
+
+          console.log(res.data);
+    
+          if (res.data.message) {
+            setLoading(false);
+            router.push("/login");
+          }
+        } catch (error) {
+          console.log(error.response);
+          setLoading(false);
+          setError(
+            error.response &&
+              (error.response.data.detail || error.response.data.error)
+          );
+        }
+      };
+
     //load user
 
     const loadUser = async () => {
@@ -74,9 +102,38 @@ export const Authprovider = ({ children }) => {
         }
     };
 
+    // Logout user
+  const logout = async () => {
+    try {
+      const res = await axios.post("/api/auth/logout");
+
+      if (res.data.success) {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    } catch (error) {
+      setLoading(false);
+      setIsAuthenticated(false);
+      setUser(null);
+      setError(
+        error.response &&
+          (error.response.data.detail || error.response.data.error)
+      );
+    }
+  };
+
+
+  //clear erroorrss
+  const clearErrors = () => {
+
+    setError(null);
+  }
+
+
 
 
     return (
+
         <AuthContext.Provider
 
         value={{
@@ -85,6 +142,9 @@ export const Authprovider = ({ children }) => {
             error,
             isAuthenticated,
             login,
+            register,
+            logout,
+            clearErrors,
         }}
         
         >
