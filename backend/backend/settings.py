@@ -45,23 +45,18 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
-    'account',
-
-
-    
-
-    
-
-    
     'storages',
     'django.contrib.gis',
-
     'django_filters',
-    'job.apps.JobConfig'
-   
+    
+
+    'job.apps.JobConfig',
+    'account.apps.AccountConfig',
+     
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -155,6 +150,7 @@ USE_TZ = True
 
 CORS_ORIGIN_WHITELIST = [
     'https://localhost:3000',
+    'https://127.0.0.1:3000'
 ]
 
 # Static files (CSS, JavaScript, Images)
