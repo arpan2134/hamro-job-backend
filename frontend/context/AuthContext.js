@@ -10,6 +10,7 @@ export const Authprovider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [error, setError] = useState(null);
+    const [updated, setUpdated] = useState(null);
 
 
 
@@ -60,7 +61,6 @@ export const Authprovider = ({ children }) => {
             password,
           });
 
-          console.log(res.data);
     
           if (res.data.message) {
             setLoading(false);
@@ -75,6 +75,41 @@ export const Authprovider = ({ children }) => {
           );
         }
       };
+
+
+      //update user
+    const UpdateProfile = async ({ firstName, lastName, email, password }, access_token) => {
+      try {
+        setLoading(true);
+  
+        const res = await axios.put(`http://127.0.0.1:8000/api/me/update/`, {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          password,
+        }, {
+          headers: {
+            Authorization: `Bearer ${access_token} `
+          },
+        }
+
+        );
+
+  
+        if (res.data) {
+          setLoading(false);
+          setUpdated(true)
+          setUser(res.data)
+        }
+      } catch (error) {
+        console.log(error.response);
+        setLoading(false);
+        setError(
+          error.response &&
+            (error.response.data.detail || error.response.data.error)
+        );
+      }
+    };
 
     //load user
 
@@ -141,9 +176,12 @@ export const Authprovider = ({ children }) => {
             user,
             error,
             isAuthenticated,
+            updated,
             login,
             register,
+            UpdateProfile,
             logout,
+            setUpdated,
             clearErrors,
         }}
         
