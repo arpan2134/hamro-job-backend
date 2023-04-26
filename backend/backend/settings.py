@@ -30,8 +30,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG') == 'True'
 
-#ALLOWED_HOSTS = ['localhost', '127.0.0.1','HTTPS' ]
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','HTTP' ]
+#ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -147,10 +148,13 @@ USE_I18N = True
 
 USE_TZ = True
 
+#CORS_ALLOW_ALL_ORIGINS = True
+
 
 CORS_ORIGIN_WHITELIST = [
-    'https://localhost:3000',
-    'https://127.0.0.1:3000'
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://*',
 ]
 
 # Static files (CSS, JavaScript, Images)
