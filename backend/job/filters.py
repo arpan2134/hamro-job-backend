@@ -1,5 +1,6 @@
 from django_filters import rest_framework as filters
 from .models import Job
+from dataclasses import field
 
 class JobsFilter(filters.FilterSet):
 

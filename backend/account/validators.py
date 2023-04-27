@@ -1,12 +1,13 @@
 import os
 
+
 def validate_file_extension(name):
-    isvalid = True
+    isValid = True
 
-    ext = os.path.splitext(name)[1] # ('image', '.jpg')
-    validate_extension = ['.pdf']
+    ext = os.path.splitext(name)[1]
+    valid_extensions = ['.pdf']
 
-    if not ext.lower() in validate_extension:
-        isvalid = False
+    if not ext.lower() in valid_extensions:
+        isValid = False
 
-        return isvalid
+    return isValid
