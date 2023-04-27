@@ -1,12 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import moment from 'moment';
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
 
+
+
+
+import JobContext from "../../context/JobContext";
+import { toast } from 'react-toastify';
+
 mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN;
 
-const JobDetails = ({ job, candidates }) => {
+const JobDetails = ({ job, candidates, access_token }) => {
+
+
+
+  const { applyToJob, checkJobApplied, applied, clearErrors, error, loading } = 
+  useContext(JobContext)
+
   useEffect(() => {
     const coordinates = job.point.split("(")[1].replace(")", "").split(" ");
+
+    //create map and set the point on center
 
     const map = new mapboxgl.Map({
       container: "job-map",
@@ -17,10 +31,28 @@ const JobDetails = ({ job, candidates }) => {
 
     //marker on the map
     new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
-  }, []);
 
-    //marker add on map 
 
+
+    
+    if (error) {
+      toast.error(error);
+    clearErrors();
+    }
+
+    checkJobApplied(job.id, access_token);
+    
+  }, [error]);
+
+
+  const applyToJobHandler = () => {
+    applyToJob(job.id, access_token);
+  };
+
+  const d1 = moment(job.lastDate);
+  const d2 = moment(Date.now());
+  const isLastDatePassed = d1.diff(d2, "days") < 0 ? true : false;
+    
     return (
         <div className="job-details-wrapper">
       <div className="container container-fluid">
@@ -40,9 +72,27 @@ const JobDetails = ({ job, candidates }) => {
 
                 <div className="mt-3">
                   <span>
-                    <button className="btn btn-primary px-4 py-2 apply-btn">
-                      Apply Now
+
+                    {loading ? (
+                      "Loading..."
+                    ): applied ? (
+                      <button 
+                      disabled
+                      className="btn btn-success px-4 py-2 apply-btn"
+                      >
+                      <i aria-hidden className='fas fa-check'></i>{" "}
+                      {loading ? "Loading..." : 'Applied'}
                     </button>
+                    ): (
+                      <button
+                       className="btn btn-primary px-4 py-2 apply-btn"
+                       onClick={applyToJobHandler}
+                       disabled={isLastDatePassed}
+                       >
+                      {loading ? 'Loading...' : 'Apply Now'}
+                    </button>
+                    )}
+                    
                     <span className="ml-4 text-success">
                       <b>{candidates}</b> candidates has already applied to this job.
                     </span>
@@ -121,14 +171,20 @@ const JobDetails = ({ job, candidates }) => {
               <p>{job.lastDate.substring(0, 10)}</p>
             </div>
 
-            <div className="mt-5 p-0">
-              <div className="alert alert-danger">
-                <h5>Note:</h5>
-                You can no longer apply to this job. This job is expired. Last
-                date to apply for this job was: <b>15-2-2022</b>
-                <br /> Checkout others job on HamroJob.
-              </div>
-            </div>
+            {isLastDatePassed && (
+
+          <div className="mt-5 p-0">
+          <div className="alert alert-danger">
+            <h5>Note:</h5>
+            You can no longer apply to this job. This job is expired. Last
+            date to apply for this job was: <b>{job.lastDate.substring(0, 10)}</b>
+            <br /> Checkout others job on HamroJob.
+          </div>
+          </div>
+
+            )}
+
+            
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useState, useEffect, createContext } from "react";
 import { useRouter } from "next/router";
 
 
+
 const AuthContext = createContext();
 
 export const Authprovider = ({ children }) => {
@@ -11,10 +12,11 @@ export const Authprovider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [error, setError] = useState(null);
     const [updated, setUpdated] = useState(null);
+    const [uploaded, setUploaded] = useState(null);;
 
-
-
+    
     const router = useRouter();
+
 
     useEffect(() => {
         if (!user) {
@@ -48,6 +50,32 @@ export const Authprovider = ({ children }) => {
             );
         }
     };
+
+    //load user
+    const loadUser = async () => {
+      try {
+        setLoading(true);
+  
+        const res = await axios.get("/api/auth/user");
+
+      if(res.data.user) {
+          loadUser();
+          setIsAuthenticated(true);
+          setLoading(false);
+          setUser(res.data.user)
+      };
+
+      } catch (error) {
+          setLoading(false);
+          setIsAuthenticated(false);
+          setUser(null);
+          setError(
+              error.response && 
+              (error.response.data.detail || error.response.data.error)
+          );
+      }
+  };
+
 
     //register user
     const register = async ({ firstName, lastName, email, password }) => {
@@ -111,31 +139,33 @@ export const Authprovider = ({ children }) => {
       }
     };
 
-    //load user
-
-    const loadUser = async () => {
-        try {
-          setLoading(true);
-    
-          const res = await axios.get("/api/auth/user");
-
-        if(res.data.user) {
-            setIsAuthenticated(true);
-            setLoading(false);
-            setUser(res.data.user)
-
+     //upload Resume....cv
+     const uploadResume = async ( formData, access_token) => {
+      try {
+        setLoading(true);
+  
+        const res = await axios.put(`http://127.0.0.1:8000/api/upload/resume/`, 
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
         }
+      );
 
-        } catch (error) {
-            setLoading(false);
-            setIsAuthenticated(false);
-            setUser(null);
-            setError(
-                error.response && 
-                (error.response.data.detail || error.response.data.error)
-            );
-        }
-    };
+      if (res.data) {
+        setLoading(false);
+        setUploaded(true);
+      }
+    } catch (error) {
+      console.log(error.response);
+      setLoading(false);
+      setError(
+        error.response &&
+          (error.response.data.detail || error.response.data.error)
+      );
+    }
+  };
 
     // Logout user
   const logout = async () => {
@@ -167,31 +197,30 @@ export const Authprovider = ({ children }) => {
 
 
 
-    return (
+  return (
 
-        <AuthContext.Provider
+    <AuthContext.Provider
 
-        value={{
-            loading,
-            user,
-            error,
-            isAuthenticated,
-            updated,
-            login,
-            register,
-            UpdateProfile,
-            logout,
-            setUpdated,
-            clearErrors,
-        }}
-        
-        >
-            {children}
-        </AuthContext.Provider>
-    )
-
-
-
-}
+      value={{
+        loading,
+        user,
+        error,
+        isAuthenticated,
+        updated,
+        uploaded,
+        login,
+        register,
+        UpdateProfile,
+        logout,
+        setUpdated,
+        setUploaded,
+        uploadResume,
+        clearErrors,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 export default AuthContext;

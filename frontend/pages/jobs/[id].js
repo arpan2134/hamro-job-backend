@@ -4,30 +4,33 @@ import axios from "axios";
 import NotFound from "@/components/layout/NotFound";
 
 
-export default function JobDetailsPage({ job, candidates, error }) {
+export default function JobDetailsPage({ job, candidates, access_token, error }) {
 
   if(error?.includes('Not found')) return <NotFound />;
 
   return (
     <Layout title={job.title}>
-     <JobDetails job={job} candidates={candidates}/>
+     <JobDetails job={job} candidates={candidates} access_token={access_token} />
     </Layout>
   );
 }
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ req, params }) {
 
   try {
 
     const res = await axios.get(`http://127.0.0.1:8000/api/jobs/${params.id}/`);
   
     const job = res.data.job;
-    const candidates = res.data.candidates
+    const candidates = res.data.candidates;
+
+    const access_token = req.cookies.access || '';  
 
     return{
         props: {
             job,
-            candidates
+            candidates,
+            access_token
         },
     };
     
