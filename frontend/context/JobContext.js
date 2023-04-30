@@ -128,6 +128,7 @@ export const JobProvider = ({ children }) => {
                 setUpdated,
                 checkJobApplied,
                 clearErrors,
+                
             }}
 
         >

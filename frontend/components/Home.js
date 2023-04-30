@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 import Pagination from "react-js-pagination";
 import Filters from "./layout/Filters";
 
-const Home = ({ data }) => {
+const Home = ({data}) => {
 
-  const { jobs, count, resPerPage } = data
+  const { jobs, count, resPerPage } = data;
 
 
   const router = useRouter();

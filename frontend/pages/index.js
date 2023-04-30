@@ -25,7 +25,7 @@ export async function getServerSideProps({ query }) {
   let max_salary = ''
 
   if(query.salary) {
-    const [min, max] = query.salary.split('_');
+    const [min, max] = query.salary.split("-");
     min_salary = min;
     max_salary = max;
   }

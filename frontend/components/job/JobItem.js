@@ -1,12 +1,13 @@
 import Link from "next/link";
 import React from "react";
 
+
 import moment from "moment/moment";
 
 
-const JobItem = ({ job }) => {
+const JobItem = ({job}) => {
   return (
-    <Link href={`/jobs/${job.id}`}>
+    <Link className="job-listing" href={`/jobs/${job.id}/`}>
       <div className="job-listing">
         <div className="job-listing-details">
           <div className="job-listing-description">
