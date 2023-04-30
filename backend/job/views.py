@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.utils import timezone
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,25 +9,22 @@ from rest_framework.pagination import PageNumberPagination
 
 from rest_framework.permissions import IsAuthenticated
 
-
-from .models import CandidatesApplied, Job
+from .serializers import JobSerializer, CandidatesAppliedSerializer
+from .models import Job, CandidatesApplied
 
 from django.shortcuts import get_object_or_404
 from .filters import JobsFilter
-from .serializers import CandidatesAppliedSerializer, JobSerializer
+
 
 # Create your views here.
 
 @api_view(['GET'])
 def getAllJobs(request):
-
     filterset = JobsFilter(request.GET, queryset=Job.objects.all().order_by('id'))
 
-    jobs = Job.objects.all()
+    count = filterset.qs.count()
 
-    Count = filterset.qs.count()
-
-    #Pagination
+    # Pagination
     resPerPage = 3
 
     paginator = PageNumberPagination()
@@ -36,10 +34,10 @@ def getAllJobs(request):
 
     serializer = JobSerializer(queryset, many=True)
     return Response({
-        "count": Count,
+        "count": count,
         "resPerPage": resPerPage,
-        'jobs':serializer.data
-        })
+        'jobs': serializer.data
+    })
 
 
 @api_view(['GET'])
@@ -56,7 +54,7 @@ def getJob(request, pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def newJob(request):
-    request.data['user'] = request.data
+    request.data['user'] = request.user
     data = request.data
 
     job = Job.objects.create(**data)
@@ -71,7 +69,7 @@ def updateJob(request, pk):
     job = get_object_or_404(Job, id=pk)
 
     if job.user != request.user:
-        return Response({ 'message': 'You cannot update this job'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'message': 'You can not update this job'}, status=status.HTTP_403_FORBIDDEN)
 
     job.title = request.data['title']
     job.description = request.data['description']
@@ -98,71 +96,66 @@ def deleteJob(request, pk):
     job = get_object_or_404(Job, id=pk)
 
     if job.user != request.user:
-        return Response({ 'message': 'You cannot delete this job'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'message': 'You can not delete this job'}, status=status.HTTP_403_FORBIDDEN)
 
     job.delete()
 
-    return Response({ 'message': 'Job is Deleted.' }, status=status.HTTP_200_OK)
+    return Response({'message': 'Job is Deleted.'}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def getTopicStats(request, topic):
-
-    args = { 'title__icontains': topic }
+    args = {'title__icontains': topic}
     jobs = Job.objects.filter(**args)
 
     if len(jobs) == 0:
-        return Response({ 'message': 'Not stats found for {topic}'.format(topic=topic) })
+        return Response({'message': 'Not stats found for {topic}'.format(topic=topic)})
 
-    
     stats = jobs.aggregate(
-        total_jobs = Count('title'),
-        avg_positions = Avg('positions'),
-        avg_salary = Avg('salary'),
-        min_salary = Min('salary'),
-        max_salary = Max('salary')
+        total_jobs=Count('title'),
+        avg_positions=Avg('positions'),
+        avg_salary=Avg('salary'),
+        min_salary=Min('salary'),
+        max_salary=Max('salary')
     )
 
     return Response(stats)
 
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def applyToJob(request, pk):
-
     user = request.user
     job = get_object_or_404(Job, id=pk)
 
     if user.userprofile.resume == '':
-        return Response({'error': 'Please upload your resume first' }, status=status.HTTP_400_BAD_REQUEST)
-    
+        return Response({'error': 'Please upload your resume first'}, status=status.HTTP_400_BAD_REQUEST)
     if job.lastDate < timezone.now():
-         return Response({'error': 'You cannot apply to this job. The date is over' }, status=status.HTTP_400_BAD_REQUEST)
-    
+        return Response({'error': 'You can not apply to this job. Job is expired'}, status=status.HTTP_400_BAD_REQUEST)
+
     alreadyApplied = job.candidatesapplied_set.filter(user=user).exists()
 
     if alreadyApplied:
-         return Response({'error': 'You have already apply to this job.' }, status=status.HTTP_400_BAD_REQUEST)
-    
+        return Response({'error': 'You have already applied to this job'}, status=status.HTTP_400_BAD_REQUEST)
+
     jobApplied = CandidatesApplied.objects.create(
-        job = job,
-        user = user,
-        resume = user.userprofile.resume
+        job=job,
+        user=user,
+        resume=user.userprofile.resume
     )
 
     return Response({
-        'applied' : True,
-        'job_id' : jobApplied.id
+        'applied': True,
+        'job_id': jobApplied.id
     },
-    status=status.HTTP_200_OK
+        status=status.HTTP_200_OK
     )
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getCurrentUserAppliedJobs(request):
-
-    args = { 'user_id': request.user.id }
+    args = {'user_id': request.user.id}
 
     jobs = CandidatesApplied.objects.filter(**args)
 
@@ -174,20 +167,18 @@ def getCurrentUserAppliedJobs(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def isApplied(request, pk):
-
     user = request.user
     job = get_object_or_404(Job, id=pk)
 
     applied = job.candidatesapplied_set.filter(user=user).exists()
-    
+
     return Response(applied)
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getCurrentUserJobs(request):
-
-    args = { 'user': request.user.id }
+    args = {'user': request.user.id}
 
     jobs = Job.objects.filter(**args)
     serializer = JobSerializer(jobs, many=True)
@@ -195,22 +186,17 @@ def getCurrentUserJobs(request):
     return Response(serializer.data)
 
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getCandidatesApplied(request, pk):
-
     user = request.user
     job = get_object_or_404(Job, id=pk)
 
     if job.user != user:
-        return Response({ 'error': 'You cant acces this job'}, status=status.HTTP_403_FORBIDDEN)
-    
+        return Response({'error': 'You can not access this job'}, status=status.HTTP_403_FORBIDDEN)
+
     candidates = job.candidatesapplied_set.all()
 
     serializer = CandidatesAppliedSerializer(candidates, many=True)
 
     return Response(serializer.data)
-    
-
-

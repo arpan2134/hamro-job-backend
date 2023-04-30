@@ -2,13 +2,13 @@ from datetime import *
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 import geocoder
 import os
 
 from django.contrib.gis.db import models as gismodels
 from django.contrib.gis.geos import Point
 
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
@@ -17,10 +17,12 @@ class JobType(models.TextChoices):
     Temporary = 'Temporary'
     Intership = 'Intership'
 
+
 class Education(models.TextChoices):
     Bachelors = 'Bachelors'
-    Masters = 'Masters'
+    Master = 'Master'
     Phd = 'Phd'
+
 
 class Industry(models.TextChoices):
     Business = 'Business'
@@ -30,15 +32,18 @@ class Industry(models.TextChoices):
     Telecommunication = 'Telecommunication'
     Others = 'Others'
 
+
 class Experience(models.TextChoices):
     NO_EXPERIENCE = 'No Experience'
     ONE_YEAR = '1 Years'
     TWO_YEAR = '2 Years'
     THREE_YEAR_PLUS = '3 Years above'
 
+
 def return_date_time():
     now = datetime.now()
     return now + timedelta(days=10)
+
 
 class Job(models.Model):
     title = models.CharField(max_length=200, null=True)
@@ -50,11 +55,13 @@ class Job(models.Model):
         choices=JobType.choices,
         default=JobType.Permanent
     )
+
     education = models.CharField(
         max_length=10,
         choices=Education.choices,
         default=Education.Bachelors
     )
+
     industry = models.CharField(
         max_length=30,
         choices=Industry.choices,
@@ -65,6 +72,7 @@ class Job(models.Model):
         choices=Experience.choices,
         default=Experience.NO_EXPERIENCE
     )
+
     salary = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(1000000)])
     positions = models.IntegerField(default=1)
     company = models.CharField(max_length=100, null=True)
@@ -73,6 +81,8 @@ class Job(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     createdAt = models.DateTimeField(auto_now_add=True)
 
+    # we want to create the address point when we create the job, by overwriting the point field with the below function
+    # i used the geocoder package, and in .env saved the mapquest key = geocoder-api code
     def save(self, *args, **kwargs):
         g = geocoder.mapquest(self.address, key=os.environ.get('GEOCODER_API'))
 
