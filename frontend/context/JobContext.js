@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useState, createContext } from "react";
+import { useRouter } from "next/router";
+
 
 
 
@@ -14,13 +16,15 @@ export const JobProvider = ({ children }) => {
     const [applied, setApplied] = useState(false);
     const [stats, setStats] = useState(false);
 
+  // Create a new job
+  const router = useRouter(); // initialize the router object
 
-      // Create a new job
   const newJob = async (data, access_token) => {
     try {
       setLoading(true);
-
-      const res = await axios.post(`http://127.0.0.1:8000/api/jobs/new/`, 
+  
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/jobs/new/`,
         data,
         {
           headers: {
@@ -28,9 +32,12 @@ export const JobProvider = ({ children }) => {
           },
         }
       );
+  
       if (res.data) {
         setLoading(false);
         setCreated(true);
+        const jobId = res.data.id; // extract the ID of the newly created job
+        router.push(`/jobs/${jobId}`); // redirect to the jobs listing page
       }
     } catch (error) {
       setLoading(false);
@@ -40,6 +47,8 @@ export const JobProvider = ({ children }) => {
       );
     }
   };
+  
+
 
 
   // update job
@@ -217,6 +226,8 @@ export const JobProvider = ({ children }) => {
                 setCreated,
                 setDeleted,
                 clearErrors,
+             
+                
                 
             }}
 

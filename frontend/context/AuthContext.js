@@ -19,6 +19,7 @@ export const Authprovider = ({ children }) => {
 
 
     useEffect(() => {
+      console.log(user);
         if (!user) {
             loadUser();
         }
@@ -105,7 +106,7 @@ export const Authprovider = ({ children }) => {
       };
 
 
-      //update user
+       //update user
     const UpdateProfile = async ({ firstName, lastName, email, password }, access_token) => {
       try {
         setLoading(true);

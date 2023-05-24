@@ -23,6 +23,7 @@ const UpdateJob = ({ job, access_token }) => {
   const [salary, setSalary] = useState("");
   const [positions, setPositions] = useState("");
   const [company, setCompany] = useState("");
+ 
 
   const router = useRouter()
 
@@ -43,6 +44,7 @@ const UpdateJob = ({ job, access_token }) => {
       setSalary(job.salary);
       setPositions(job.positions);
       setCompany(job.company);
+      
     }
 
     
@@ -51,12 +53,17 @@ const UpdateJob = ({ job, access_token }) => {
       clearErrors();
     }
 
-    if (updated) {
+    if (job && updated) {
       setUpdated(false);
-      router.push('/employeer/jobs')
+      router.push(`/jobs/${job.id}`);
+      toast.success("Job has been updated.");
+    }
+  
+    if (error) {
+      toast.error(error);
+      clearErrors();
     }
   }, [error, updated]);
-
   const submitHandler = (e) => {
     e.preventDefault();
 

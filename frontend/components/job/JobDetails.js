@@ -84,7 +84,8 @@ const JobDetails = ({ job, candidates, access_token }) => {
                         <i aria-hidden className="fas fa-check"></i>{" "}
                         {loading ? "Loading" : "Applied"}
                       </button>
-                    ) : (
+                    ) : 
+                    (
                       <button
                         className="btn btn-primary px-4 py-2 apply-btn"
                         onClick={applyToJobHandler}

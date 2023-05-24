@@ -22,6 +22,7 @@ const NewJob = ({ access_token }) => {
   const [salary, setSalary] = useState("");
   const [positions, setPositions] = useState("");
   const [company, setCompany] = useState("");
+ 
 
   const { clearErrors, error, loading, created, newJob, setCreated } =
     useContext(JobContext);

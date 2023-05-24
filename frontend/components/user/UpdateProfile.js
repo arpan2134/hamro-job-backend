@@ -13,38 +13,39 @@ const UpdateProfile = ({ access_token }) => {
 
   const router = useRouter();
 
-  const { updated,
-     loading, 
-     error,
-      user,
-       clearErrors,
-        UpdateProfile,
-         setUpdated,
-         } = useContext(AuthContext);
+  const {
+    updated,
+    loading,
+    error,
+    user,
+    clearErrors,
+    updateProfile,
+    setUpdated,
+  } = useContext(AuthContext);
 
   useEffect(() => {
-
-    if(user) {
-        setFirstName(user.first_name)
-        setLastName(user.last_name)
-        setEmail(user.email)
+    if (user) {
+      setFirstName(user.first_name);
+      setLastName(user.last_name);
+      setEmail(user.email);
     }
+
     if (error) {
       toast.error(error);
       clearErrors();
     }
 
-
-    if(updated) {
+    if (updated) {
       setUpdated(false);
-      router.push('/me')
-    }
+      router.push("/me");
+      toast.success("Your profile is updated successfully.");
 
-  }, [ error, user, updated]);
+    }
+  }, [error, user, updated]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    UpdateProfile({ firstName, lastName, email, password }, access_token);
+    updateProfile({ firstName, lastName, email, password }, access_token);
   };
 
   return (
@@ -52,7 +53,7 @@ const UpdateProfile = ({ access_token }) => {
       <div className="modalWrapper">
         <div className="left">
           <div style={{ width: "100%", height: "100%", position: "relative" }}>
-            <Image src="/images/Profile.svg" alt="register" fill sizes="100vw" />
+            <Image src="/images/profile.svg" alt="register" fill sizes="100vw" />
           </div>
         </div>
         <div className="right">
@@ -103,7 +104,7 @@ const UpdateProfile = ({ access_token }) => {
                     placeholder="Enter Your Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    minLength={6}   
+                    minLength={6}
                   />
                 </div>
               </div>
