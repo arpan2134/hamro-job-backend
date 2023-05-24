@@ -20,7 +20,7 @@ class JobType(models.TextChoices):
 
 class Education(models.TextChoices):
     Bachelors = 'Bachelors'
-    Master = 'Master'
+    Masters = 'Masters'
     Phd = 'Phd'
 
 

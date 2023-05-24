@@ -10,7 +10,7 @@ def custom_exception_handler(exc, context):
 
     if exception_class == 'AuthenticationFailed':
         response.data = {
-            "error": "Invalid Email or Password. Try again.(Thank You)"
+            "error": "Invalid Email or Password Try again.(Thank You)"
         }
 
     if exception_class == 'NotAuthenticated':

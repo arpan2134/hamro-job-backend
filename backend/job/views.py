@@ -17,6 +17,7 @@ from .filters import JobsFilter
 
 
 # Create your views here.
+#get all job
 
 @api_view(['GET'])
 def getAllJobs(request):
@@ -39,6 +40,7 @@ def getAllJobs(request):
         'jobs': serializer.data
     })
 
+#get job
 
 @api_view(['GET'])
 def getJob(request, pk):
@@ -50,7 +52,7 @@ def getJob(request, pk):
 
     return Response({'job': serializer.data, 'candidates': candidates})
 
-
+#new job
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def newJob(request):
@@ -62,7 +64,7 @@ def newJob(request):
     serializer = JobSerializer(job, many=False)
     return Response(serializer.data)
 
-
+#updaye job
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def updateJob(request, pk):
@@ -89,7 +91,7 @@ def updateJob(request, pk):
 
     return Response(serializer.data)
 
-
+#delete job
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def deleteJob(request, pk):
@@ -102,7 +104,7 @@ def deleteJob(request, pk):
 
     return Response({'message': 'Job is Deleted.'}, status=status.HTTP_200_OK)
 
-
+#get topic stats
 @api_view(['GET'])
 def getTopicStats(request, topic):
     args = {'title__icontains': topic}
@@ -121,7 +123,7 @@ def getTopicStats(request, topic):
 
     return Response(stats)
 
-
+#apply to job
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def applyToJob(request, pk):
@@ -138,6 +140,9 @@ def applyToJob(request, pk):
     if alreadyApplied:
         return Response({'error': 'You have already applied to this job'}, status=status.HTTP_400_BAD_REQUEST)
 
+    if job.user.id == user.id:
+        return Response({'error': 'You cannot apply to a job that you have created'}, status=status.HTTP_400_BAD_REQUEST)
+
     jobApplied = CandidatesApplied.objects.create(
         job=job,
         user=user,
@@ -151,7 +156,7 @@ def applyToJob(request, pk):
         status=status.HTTP_200_OK
     )
 
-
+#get current user applied job
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getCurrentUserAppliedJobs(request):
@@ -163,7 +168,7 @@ def getCurrentUserAppliedJobs(request):
 
     return Response(serializer.data)
 
-
+#applied
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def isApplied(request, pk):
@@ -174,7 +179,7 @@ def isApplied(request, pk):
 
     return Response(applied)
 
-
+#getcurrent user applied job
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getCurrentUserJobs(request):
@@ -185,7 +190,7 @@ def getCurrentUserJobs(request):
 
     return Response(serializer.data)
 
-
+ #get candidateapplied
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getCandidatesApplied(request, pk):
